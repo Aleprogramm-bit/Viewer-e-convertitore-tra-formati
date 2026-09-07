@@ -11,15 +11,17 @@ input.addEventListener("change", () => {
 
   const ext = file.name.split(".").pop().toLowerCase();
 
-  if (["png","jpg","jpeg","webp","gif"].includes(ext)) {
-    showStandardImage(file);
-  } else if (ext === "dds") {
-    showDDS(file);
-  } else if (ext === "tga") {
-    showTGA(file);
-  } else {
-    viewer.textContent = "Formato non supportato.";
-  }
+if (["png","jpg","jpeg","webp","gif"].includes(ext)) {
+  showStandardImage(file);
+} else if (ext === "dds") {
+  showDDS(file);
+} else if (ext === "tga") {
+  showTGA(file);
+} else if (ext === "bmp") {
+  showBMP(file);
+} else {
+  viewer.textContent = "Formato non supportato.";
+}
 });
 
 function showStandardImage(file) {
