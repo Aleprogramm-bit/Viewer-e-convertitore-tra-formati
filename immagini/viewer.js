@@ -101,4 +101,26 @@ btnConvert.addEventListener("click", () => {
 
     URL.revokeObjectURL(url);
   }, format);
+
+function showTGA(file) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    const tga = new TGA(reader.result);
+
+    const canvas = document.createElement("canvas");
+    canvas.width = tga.width;
+    canvas.height = tga.height;
+
+    const ctx = canvas.getContext("2d");
+    const imgData = ctx.createImageData(tga.width, tga.height);
+    imgData.data.set(tga.imageData);
+
+    ctx.putImageData(imgData, 0, 0);
+
+    viewer.innerHTML = "";
+    viewer.appendChild(canvas);
+    currentCanvas = canvas;
+  };
+  reader.readAsArrayBuffer(file);
+}
 });
