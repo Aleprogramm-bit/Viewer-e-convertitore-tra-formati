@@ -9,13 +9,15 @@
     audio { width:90%; margin-top:20px; }
     #controls { margin-top:20px; }
     select, button { padding:8px 12px; margin:5px; }
+    #info { margin-top:15px; font-size:14px; color:#aaa; }
   </style>
 </head>
 <body>
 
   <h1>Universal Audio Viewer & Converter</h1>
 
-  <input type="file" id="fileInput" accept="audio/*">
+  <input type="file" id="fileInput">
+
   <div id="viewer"></div>
 
   <div id="controls">
@@ -27,6 +29,8 @@
     </select>
     <button id="btnConvert">Scarica convertito</button>
   </div>
+
+  <div id="info"></div>
 
   <script src="ffmpeg.min.js"></script>
   <script src="audio-viewer.js"></script>
