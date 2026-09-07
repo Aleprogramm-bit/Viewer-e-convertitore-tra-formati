@@ -3,7 +3,7 @@ const viewer = document.querySelector("#viewer");
 const formatSelect = document.querySelector("#formatSelect");
 const btnConvert = document.querySelector("#btnConvert");
 
-let currentCanvas = null; // dove teniamo l’immagine per convertirla
+let currentCanvas = null;
 
 input.addEventListener("change", () => {
   const file = input.files[0];
@@ -12,14 +12,17 @@ input.addEventListener("change", () => {
   const ext = file.name.split(".").pop().toLowerCase();
 
   if (["png","jpg","jpeg","webp","gif"].includes(ext)) {
-    showStandardImageToCanvas(file);
+    showStandardImage(file);
+  } else if (ext === "dds") {
+    showDDS(file);
+  } else if (ext === "tga") {
+    showTGA(file);
   } else {
-    viewer.textContent = "Formato non supportato (qui puoi aggiungere DDS/TGA).";
+    viewer.textContent = "Formato non supportato.";
   }
 });
 
-// mostra immagine standard e la mette in canvas (così poi la converti)
-function showStandardImageToCanvas(file) {
+function showStandardImage(file) {
   const url = URL.createObjectURL(file);
   const img = new Image();
   img.onload = () => {
@@ -32,32 +35,70 @@ function showStandardImageToCanvas(file) {
     viewer.innerHTML = "";
     viewer.appendChild(canvas);
     currentCanvas = canvas;
-
-    URL.revokeObjectURL(url);
   };
   img.src = url;
 }
 
-// CONVERSIONE: da canvas → nuovo formato
+function showDDS(file) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    const dds = new DDSParser(new Uint8Array(reader.result));
+
+    const canvas = document.createElement("canvas");
+    canvas.width = dds.width;
+    canvas.height = dds.height;
+
+    const ctx = canvas.getContext("2d");
+    const imgData = ctx.createImageData(dds.width, dds.height);
+    imgData.data.set(dds.imageData);
+
+    ctx.putImageData(imgData, 0, 0);
+
+    viewer.innerHTML = "";
+    viewer.appendChild(canvas);
+    currentCanvas = canvas;
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function showTGA(file) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    const tga = new TGA(reader.result);
+
+    const canvas = document.createElement("canvas");
+    canvas.width = tga.width;
+    canvas.height = tga.height;
+
+    const ctx = canvas.getContext("2d");
+    const imgData = ctx.createImageData(tga.width, tga.height);
+    imgData.data.set(tga.imageData);
+
+    ctx.putImageData(imgData, 0, 0);
+
+    viewer.innerHTML = "";
+    viewer.appendChild(canvas);
+    currentCanvas = canvas;
+  };
+  reader.readAsArrayBuffer(file);
+}
+
 btnConvert.addEventListener("click", () => {
   if (!currentCanvas) {
     alert("Nessuna immagine caricata.");
     return;
   }
 
-  const format = formatSelect.value; // image/png, image/jpeg, image/webp
-  const quality = format === "image/jpeg" ? 0.9 : 1.0; // qualità JPG
-
+  const format = formatSelect.value;
   currentCanvas.toBlob(blob => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
 
-    // nome file di output
-    const ext = format.split("/")[1]; // png, jpeg, webp
-    a.download = `immagine_convertita.${ext === "jpeg" ? "jpg" : ext}`;
+    const ext = format.split("/")[1];
+    a.download = `convertito.${ext === "jpeg" ? "jpg" : ext}`;
     a.click();
 
     URL.revokeObjectURL(url);
-  }, format, quality);
+  }, format);
 });
