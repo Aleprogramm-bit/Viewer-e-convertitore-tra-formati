@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8">
-  <title>Image Viewer & Converter</title>
+  <title>Universal Image Viewer & Converter</title>
   <style>
     body { font-family: Arial; background:#111; color:#fff; text-align:center; }
     #viewer { margin-top:20px; }
@@ -15,7 +15,9 @@
 
   <h1>Universal Image Viewer & Converter</h1>
 
-  <input type="file" id="fileInput" accept="image/*">
+  <!-- IMPORTANTE: niente accept="image/*" -->
+  <input type="file" id="fileInput">
+
   <div id="viewer"></div>
 
   <div id="controls">
@@ -28,6 +30,8 @@
     <button id="btnConvert">Scarica convertito</button>
   </div>
 
+  <script src="dds-parser.js"></script>
+  <script src="tga.js"></script>
   <script src="viewer.js"></script>
 </body>
 </html>
